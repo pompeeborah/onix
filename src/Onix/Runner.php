@@ -25,8 +25,9 @@ class Runner
         }
     }
 
-    private function parseOptions($argv) {
-        
+    private function parseOptions($argv)
+    {
+
     }
 
     private function usage($msg = '')
@@ -36,6 +37,11 @@ class Runner
 
     private function run($params)
     {
-
+        foreach (glob(TEST_DIR.'/*.php') as $test_file) {
+            if (is_readable($test_file)) {
+                include($test_file);
+            }
+        }
+        Logger::getInstance()->output();
     }
 }
