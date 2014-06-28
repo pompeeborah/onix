@@ -9,3 +9,4 @@ $test->get('http://www.oldillusion.com/onix/sample.xml');
 
 $test->get('http://www.oldillusion.com/onix/sample.json');
 $test->isValidJSON();
+$test->seeJSONElement('book', 15);

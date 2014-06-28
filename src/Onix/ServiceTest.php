@@ -88,7 +88,10 @@ class ServiceTest
         } catch (TestFailedException $tfe) {
             throw $tfe;
         } catch (\Exception $e) {
-            $this->logger->fail('XML not valid', array('exception' => $e->getMessage()));
+            $this->logger->fail(
+                'XML not valid',
+                array('exception' => $e->getMessage(), 'errors' => libxml_get_errors())
+            );
         }
     }
 
@@ -105,7 +108,9 @@ class ServiceTest
             if (count($results) >= $min_count) {
                 $this->logger->pass('XML element found: '.$xpath.' ('.count($results).'/'.$min_count.')');
             } else {
-                $this->logger->fail('XML element found, but below minimum count: '.$xpath.' ('.count($results).'/'.$min_count.')');
+                $this->logger->fail(
+                    'XML element found, but below minimum count: '.$xpath.' ('.count($results).'/'.$min_count.')'
+                );
             }
         }
     }
@@ -116,7 +121,17 @@ class ServiceTest
         if (!$this->decoded_body) {
             $this->logger->fail('JSON not valid', array('exception' => Utility::decodeJSONError(json_last_error())));
         } else {
+            $this->body_type = 'json';
             $this->logger->pass('JSON valid');
         }
+    }
+
+    public function seeJSONElement($path, $min_count = 0)
+    {
+        if ($this->body_type != 'json') {
+            $this->isValidJSON();
+        }
+
+        
     }
 }
