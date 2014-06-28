@@ -10,6 +10,10 @@ class ServiceTest
 
     private $response;
 
+    private $decoded_body;
+
+    private $body_type;
+
     public function __construct($test_name = null)
     {
         $this->client = new \GuzzleHttp\Client();
@@ -73,16 +77,30 @@ class ServiceTest
     {
         try {
             libxml_use_internal_errors(true);
-            $xml = new \SimpleXMLElement($this->response->getBody());
-            if ($xml instanceof \SimpleXMLElement) {
+            $this->decoded_body = new \SimpleXMLElement($this->response->getBody());
+            if ($this->decoded_body instanceof \SimpleXMLElement) {
+                $this->body_type = 'xml';
                 $this->logger->pass('XML valid');
             } else {
+                $this->body_type = null;
                 $this->logger->fail('XML not valid');
             }
         } catch (TestFailedException $tfe) {
             throw $tfe;
         } catch (\Exception $e) {
             $this->logger->fail('XML not valid', array('exception' => $e->getMessage()));
+        }
+    }
+
+    public function seeXMLElement($xpath)
+    {
+        if ($this->body_type != 'xml') {
+            $this->isValidXML();
+        }
+
+        $results = $this->decoded_body->xpath($xpath);
+        if (!$results || empty($results)) {
+            $this->logger->fail('XML element not found: '.$xpath);
         }
     }
 }
