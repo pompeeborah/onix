@@ -3,6 +3,7 @@
 define('ROOT_DIR', dirname(__DIR__));
 define('ETC_DIR', ROOT_DIR.'/etc');
 define('LOG_DIR', ROOT_DIR.'/log');
+define('TEST_DIR', ROOT_DIR.'/tests');
 
 function srcAutoloader($className)
 {

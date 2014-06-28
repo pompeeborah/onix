@@ -39,7 +39,18 @@ class Runner
     {
         foreach (glob(TEST_DIR.'/*.php') as $test_file) {
             if (is_readable($test_file)) {
-                include($test_file);
+                echo '>> '.Utility::getTestNameFromFile($test_file);
+                ob_start();
+                try {
+                    include($test_file);
+                    echo " (PASS)\n";
+                } catch (TestFailedException $tfe) {
+                    echo " (FAIL)\n";
+                } catch (\Exception $e) {
+
+                }
+                $test_output = ob_get_clean(); // We'll probably want this later
+                print_r($test_output);
             }
         }
         Logger::getInstance()->output();
