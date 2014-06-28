@@ -92,7 +92,7 @@ class ServiceTest
         }
     }
 
-    public function seeXMLElement($xpath)
+    public function seeXMLElement($xpath, $min_count = 0)
     {
         if ($this->body_type != 'xml') {
             $this->isValidXML();
@@ -101,6 +101,22 @@ class ServiceTest
         $results = $this->decoded_body->xpath($xpath);
         if (!$results || empty($results)) {
             $this->logger->fail('XML element not found: '.$xpath);
+        } else {
+            if (count($results) >= $min_count) {
+                $this->logger->pass('XML element found: '.$xpath.' ('.count($results).'/'.$min_count.')');
+            } else {
+                $this->logger->fail('XML element found, but below minimum count: '.$xpath.' ('.count($results).'/'.$min_count.')');
+            }
+        }
+    }
+
+    public function isValidJSON()
+    {
+        $this->decoded_body = json_decode($this->response->getBody());
+        if (!$this->decoded_body) {
+            $this->logger->fail('JSON not valid', array('exception' => Utility::decodeJSONError(json_last_error())));
+        } else {
+            $this->logger->pass('JSON valid');
         }
     }
 }
