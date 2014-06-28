@@ -1,3 +1,3 @@
-![alt tag](https://raw.github.com/olfactoryninja/onix/onix.jpg)
+![alt tag](https://github.com/olfactoryninja/master/onix/onix.jpg)
 Onix - Web services / API test facility
 =======================================
