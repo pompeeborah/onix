@@ -5,15 +5,20 @@ namespace Onix;
 class Runner
 {
     private $allowed_methods = array(
-        'run'
+        'run',
+        'list'
     );
 
-    public function __construct($argv) {
+    public function __construct() {
+    }
+
+    public function start($argv)
+    {
         //$this->parseOptions(&$argv);
         if (isset($argv[1]) && in_array($argv[1], $this->allowed_methods)) {
-            if (method_exists($this, $argv[1])) {
+            if (method_exists($this, $argv[1].'Tests')) {
                 call_user_func_array(
-                    array($this, $argv[1]), 
+                    array($this, $argv[1].'Tests'), 
                     array(isset($argv[2]) ? array_splice($argv, 2) : array())
                 );
             } else {
@@ -35,7 +40,7 @@ class Runner
         echo "Usage: say something nice\n";
     }
 
-    private function run($params)
+    public function runTests($params)
     {
         foreach (glob(TEST_DIR.'/*.php') as $test_file) {
             if (is_readable($test_file)) {
@@ -54,5 +59,10 @@ class Runner
             }
         }
         Logger::getInstance()->output();
+    }
+
+    public function listTests($params)
+    {
+
     }
 }

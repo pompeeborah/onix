@@ -1,6 +1,7 @@
 {
     "require": {
         "guzzlehttp/guzzle": "4.*",
-        "monolog/monolog": "1.*"
+        "monolog/monolog": "1.*",
+        "twig/twig": "1.*"
     }
 }
