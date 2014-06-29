@@ -17,10 +17,15 @@ class Api
         if (empty($parsed) || !isset($parsed['method'])) {
             $return = array('Status' => 'N', 'ErrMsg' => 'Nothing to do');
         } else {
-            
+
             $return = array('Status' => 'Y');
         }
 
         return $return;
+    }
+
+    private function runTest($params = array())
+    {
+
     }
 }
