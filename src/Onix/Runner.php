@@ -44,31 +44,11 @@ class Runner
 
     private function usage($msg = '')
     {
-        echo "Usage: say something nice\n";
+        echo "Usage: say something interesting here\n";
     }
 
     public function runAllTests($params)
     {
-        /*foreach (glob(TEST_DIR.'/*.php') as $test_file) {
-            if (is_readable($test_file)) {
-                echo '>> '.Utility::getTestNameFromFile($test_file);
-                $test_output = '';
-                try {
-                    ob_start();
-                    include($test_file);
-                    $test_output = ob_get_clean();
-                    echo " (PASS)\n";
-                } catch (TestFailedException $tfe) {
-                    $test_output = ob_get_clean();
-                    echo " (FAIL)\n";
-                } catch (\Exception $e) {
-                    echo $e->getMessage();
-                    // Something bad happened
-                }
-                print_r($test_output);
-            }
-        }
-        Logger::getInstance()->output();*/
         if ($handle = opendir($this->test_dir)) {
             while (false !== ($entry = readdir($handle))) {
                 if ($entry == '.' || $entry == '..') {
@@ -85,7 +65,7 @@ class Runner
     public function runTest($context, $test_name)
     {
         Config::getInstance()->setContext($context);
-        return $this->execute($this->test_dir.'/'.$test_name);
+        return $this->execute($this->test_dir.'/'.$context.'/'.$test_name.'.php');
     }
 
     private function execute($test_file)

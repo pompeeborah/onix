@@ -6,6 +6,11 @@ class Api
 {
     private $runner;
 
+    private $allowed_methods = array(
+        'run' => 'runTest',
+        'list' => 'listTests'
+    );
+
     public function __construct()
     {
         $this->runner = new Runner();
@@ -17,9 +22,10 @@ class Api
         if (empty($parsed) || !isset($parsed['method'])) {
             $return = array('Status' => 'N', 'ErrMsg' => 'Nothing to do');
         } else {
-            if (method_exists($this, $parsed['method'])) {
+            if (array_key_exists($parsed['method'], $this->allowed_methods) &&
+                method_exists($this, $this->allowed_methods[$parsed['method']])) {
                 $return = call_user_func_array(
-                    array($this, $parsed['method']),
+                    array($this, $this->allowed_methods[$parsed['method']]),
                     array($parsed)
                 );
             } else {
