@@ -5,20 +5,21 @@ namespace Onix;
 class Runner
 {
     private $allowed_methods = array(
-        'run',
-        'list'
+        'run' => 'runAllTests',
+        'list' => 'listTests'
     );
 
-    public function __construct() {
+    public function __construct()
+    {
     }
 
     public function start($argv)
     {
         //$this->parseOptions(&$argv);
-        if (isset($argv[1]) && in_array($argv[1], $this->allowed_methods)) {
-            if (method_exists($this, $argv[1].'Tests')) {
+        if (isset($argv[1]) && array_key_exists($argv[1], $this->allowed_methods)) {
+            if (method_exists($this, $this->allowed_methods[$argv[1]])) {
                 call_user_func_array(
-                    array($this, $argv[1].'Tests'), 
+                    array($this, $this->allowed_methods[$argv[1]]),
                     array(isset($argv[2]) ? array_splice($argv, 2) : array())
                 );
             } else {
@@ -40,29 +41,83 @@ class Runner
         echo "Usage: say something nice\n";
     }
 
-    public function runTests($params)
+    public function runAllTests($params)
     {
         foreach (glob(TEST_DIR.'/*.php') as $test_file) {
             if (is_readable($test_file)) {
                 echo '>> '.Utility::getTestNameFromFile($test_file);
-                ob_start();
+                $test_output = '';
                 try {
+                    ob_start();
                     include($test_file);
+                    $test_output = ob_get_clean();
                     echo " (PASS)\n";
                 } catch (TestFailedException $tfe) {
+                    $test_output = ob_get_clean();
                     echo " (FAIL)\n";
                 } catch (\Exception $e) {
-
+                    echo $e->getMessage();
+                    // Something bad happened
                 }
-                $test_output = ob_get_clean(); // We'll probably want this later
                 print_r($test_output);
             }
         }
         Logger::getInstance()->output();
     }
 
-    public function listTests($params)
+    public function runTest($test_name)
+    {
+        if (!is_readable(TEST_DIR.'/'.$test_name.'.php')) {
+            $return = array('Status' => 'N', 'ErrMsg' => 'Invalid test specified');
+        } else {
+            ob_start();
+            try {
+                include(TEST_DIR.'/'.$test_name.'.php');
+            } catch (TestFailedException $tfe) {
+                // No need to do anything with this, the Logger will have recorded the error
+            } catch (\Exception $e) {
+                // Something bad happened
+            }
+            $test_output = ob_get_clean();
+            $return = array('Status' => 'Y', 'Results' => Logger::getInstance()->getCurrentResults());
+        }
+
+        return $return;
+    }
+
+    private function execute($test_file)
     {
 
+    }
+
+    public function listTests($params = array())
+    {
+        $tests = array();
+        $tests = $this->parseDirectory(TEST_DIR);
+
+        return array('Status' => 'Y', 'Results' => $tests);
+    }
+
+    private function parseDirectory($directory, $run_tests = false)
+    {
+        $listing = array();
+
+        if ($handle = opendir($directory)) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry == '.' || $entry == '..') {
+                    continue;
+                } elseif (is_dir($directory.'/'.$entry)) {
+                    $listing[$entry] = $this->parseDirectory($directory.'/'.$entry);
+                } elseif (preg_match('/([a-z0-9_\-]+)\.php$/i', $entry, $matches)) {
+                    $listing[] = $matches[1];
+                    if ($run_tests && is_readable($directory.'/'.$entry)) {
+                        //$this->execute($directory.'/'.$entry);
+                    }
+                }
+            }
+            closedir($handle);
+        }
+
+        return $listing;
     }
 }

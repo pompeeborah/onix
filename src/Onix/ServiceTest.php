@@ -14,10 +14,13 @@ class ServiceTest
 
     private $body_type;
 
-    public function __construct($test_name = null)
+    private $config;
+
+    public function __construct($context, $test_name = null)
     {
         $this->client = new \GuzzleHttp\Client();
         $this->logger = Logger::getInstance();
+        $this->config = Config::getInstance()->get($context);
         
         if (!$test_name) {
             $trace = debug_backtrace();
@@ -36,24 +39,24 @@ class ServiceTest
     public function get($url, $options = array())
     {
         try {
-            $this->response = $this->client->get($url, $options);
-            $this->logger->pass('Get '.$url);
+            $this->response = $this->client->get($this->config['url'].$url, $options);
+            $this->logger->pass('Get '.$this->config['url'].$url);
         } catch (TestFailedException $tfe) {
             throw $tfe;
         } catch (\Exception $e) {
-            $this->logger->fail('Get '.$url, array('exception' => $e->getMessage()));
+            $this->logger->fail('Get '.$this->config['url'].$url, array('exception' => $e->getMessage()));
         }
     }
 
     public function post($url, $data = array(), $options = array())
     {
         try {
-            $this->response = $this->client->post($url, $data, $options);
-            $this->logger->pass('Post '.$url);
+            $this->response = $this->client->post($this->config['url'].$url, $data, $options);
+            $this->logger->pass('Post '.$this->config['url'].$url);
         } catch (TestFailedException $tfe) {
             throw $tfe;
         } catch (\Exception $e) {
-            $this->logger->fail('Post '.$url, array('exception' => $e->getMessage()));
+            $this->logger->fail('Post '.$this->config['url'].$url, array('exception' => $e->getMessage()));
         }
     }
 
@@ -117,7 +120,7 @@ class ServiceTest
 
     public function isValidJSON()
     {
-        $this->decoded_body = json_decode($this->response->getBody());
+        $this->decoded_body = json_decode($this->response->getBody(), true);
         if (!$this->decoded_body) {
             $this->logger->fail('JSON not valid', array('exception' => Utility::decodeJSONError(json_last_error())));
         } else {
@@ -132,6 +135,22 @@ class ServiceTest
             $this->isValidJSON();
         }
 
-        
+        $pointer = $this->decoded_body;
+
+        if ($path != '/') {
+            foreach (explode('/', ltrim($path, '/')) as $level) {
+                if (array_key_exists($level, $pointer)) {
+                    $pointer = $pointer[$level];
+                } else {
+                    $this->logger->fail('JSON element not found: '.$path);
+                }
+            }
+        }
+
+        if (is_array($pointer) && count($pointer) < $min_count) {
+            $this->logger->fail('JSON element found, but below minimum count: '.$path.' ('.count($pointer).'/'.$min_count.')');
+        } else {
+            $this->logger->pass('JSON element found: '.$path.' ('.count($pointer).'/'.$min_count.')');
+        }
     }
 }
