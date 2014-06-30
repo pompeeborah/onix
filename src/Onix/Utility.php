@@ -18,7 +18,17 @@ class Utility
 
     public static function getTestNameFromFile($test_file)
     {
-        return preg_replace('/\.[a-z0-9_]+$/', '', basename($test_file));
+        $config = Config::getInstance();
+        $global = $config->get('global');
+        return preg_replace(
+            '/\.[a-z0-9_]+$/',
+            '',
+            str_replace(
+                ROOT_DIR.'/'.$global['test_dir'].'/'.$config->getContext(),
+                '',
+                $test_file
+            )
+        );
     }
 
     public static function decodeJSONError($error_code)
