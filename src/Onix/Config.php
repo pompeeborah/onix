@@ -10,6 +10,8 @@ class Config
 
     private $config_data;
 
+    private $context;
+
     private function __construct($config_dir = null)
     {
         if (!$config_dir) {
@@ -49,5 +51,20 @@ class Config
     public function get($name)
     {
         return isset($this->config_data[$name]) ? $this->config_data[$name] : null;
+    }
+
+    public function setContext($context)
+    {
+        $this->context = $context;
+    }
+
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    public function getContextConfig($context = null)
+    {
+        
     }
 }

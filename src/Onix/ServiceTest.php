@@ -16,11 +16,11 @@ class ServiceTest
 
     private $config;
 
-    public function __construct($context, $test_name = null)
+    public function __construct($test_name = null)
     {
         $this->client = new \GuzzleHttp\Client();
         $this->logger = Logger::getInstance();
-        $this->config = Config::getInstance()->get($context);
+        $this->config = Config::getInstance()->getContextConfig();
         
         if (!$test_name) {
             $trace = debug_backtrace();

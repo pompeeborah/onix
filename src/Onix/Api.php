@@ -32,10 +32,10 @@ class Api
 
     private function runTest($params = array())
     {
-        if (!isset($params['name'])) {
-            $return = array('Status' => 'N', 'ErrMsg' => 'No test provided');
+        if (!isset($params['test']) || !isset($params['context'])) {
+            $return = array('Status' => 'N', 'ErrMsg' => 'No test or context provided');
         } else {
-            $results = $this->runner->runTest($params['name']);
+            $results = $this->runner->runTest($params['context'], $params['test']);
             if (!isset($results['Status']) || $results['Status'] == 'N') {
                 $return = array('Status' => 'N', 'ErrMsg' => isset($results['ErrMsg']) ? $results['ErrMsg'] : '');
             } else {

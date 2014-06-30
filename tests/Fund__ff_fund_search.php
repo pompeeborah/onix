@@ -1,6 +1,6 @@
 <?php
 
-$test = new \Onix\ServiceTest('servicelayer');
+$test = new \Onix\ServiceTest();
 
 $test->get('/Fund/ff_fund_search/name_match/fidelity/format/xml');
 $test->isResponseCode(200);
