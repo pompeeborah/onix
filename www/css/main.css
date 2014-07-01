@@ -1,24 +1,23 @@
 body {
-    background-color: #444;
     font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;;
 }
 
 .container {
     width: 960px;
     margin: auto;
-    background-color: #ddd;
 }
 
 header {
     height: 50px;
-    background-color: #333;
-    color: #ddd;
     padding: 5px 25px;
+    border-bottom: solid #ccc 1px;
 }
 
 header h1 {
     display: inline-block;
-    font-size: 2.5em;
+    font-size: 2em;
+    font-weight: bold;
+    padding-top: 5px;
 }
 
 header .subheading {
@@ -32,10 +31,9 @@ section.main {
 
 footer {
     font-size: 0.65em;
-    background-color: #333;
-    color: #ddd;
     padding: 5px 25px;
     height: 12px;
+    border-top: solid #ccc 1px;
 }
 
 footer .blurb {
@@ -43,11 +41,18 @@ footer .blurb {
     padding-top: 2px;
 }
 
+.suite {
+    border-bottom: solid #d8d8d8 1px;
+    margin-bottom: 10px;
+}
+
 .test {
     width: 300px;
     height: 20px;
     padding: 10px;
-    border: solid #333 2px;
+    border: solid #ccc 1px;
     border-radius: 7px;
-    background-color: #eee;
+    background-color: #f5f5f5;
+    box-shadow: 2px 2px #f0f0f0;
+    font-size: 0.85em;
 }
