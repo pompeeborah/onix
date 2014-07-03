@@ -14,44 +14,20 @@
                 <span class="subheading">Web services / API acceptance testing</span>
             </header>
             <section class="main">
-                <div class="suite">
-                    Servicelayer
-                </div>
-                <div class="test">
-                    <span class="title">Fund/ff_fund_search</span>
-                    <span class="pass">Pass</span>
-                    <span class="fail">Fail</span>
-                </div>
-                <div class="test">
-                    <span class="title">Fund/ff_fund_search</span>
-                    <span class="pass">Pass</span>
-                    <span class="fail">Fail</span>
-                </div>
-                <div class="test">
-                    <span class="title">Fund/ff_fund_search</span>
-                    <span class="pass">Pass</span>
-                    <span class="fail">Fail</span>
-                </div>
-                <div class="test">
-                    <span class="title">Fund/ff_fund_search</span>
-                    <span class="pass">Pass</span>
-                    <span class="fail">Fail</span>
-                </div>
-                <div class="test">
-                    <span class="title">Fund/ff_fund_search</span>
-                    <span class="pass">Pass</span>
-                    <span class="fail">Fail</span>
-                </div>
-                <div class="test">
-                    <span class="title">Fund/ff_fund_search</span>
-                    <span class="pass">Pass</span>
-                    <span class="fail">Fail</span>
-                </div>
-                <div class="test">
-                    <span class="title">Fund/ff_fund_search</span>
-                    <span class="pass">Pass</span>
-                    <span class="fail">Fail</span>
-                </div>
+                <script id="suite-template" type="text/x-handlebars-template">
+                    <div class="suite">
+                        {{suite_name}}
+                    </div>
+                </script>
+                <script id="test-template" type="text/x-handlebars-template">
+                    <div class="test">
+                        <label>
+                            <input type="checkbox" id="chk_{{test_name}}" checked="checked" />
+                            {{test_name}}
+                        </label>
+                        <div class="result none">n/a</div>
+                    </div>
+                </script>
             </section>
             <footer>
                 <span class="blurb">
