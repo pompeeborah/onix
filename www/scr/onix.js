@@ -11,7 +11,7 @@ function getList()
             for (suite in data.Results) {
                 $('section.main').append(suite_template({suite_name: suite.capitalise()}));
                 for (test in data.Results[suite]) {
-                    $('section.main').append(test_template({test_name: test}));
+                    $('section.main').append(test_template({test_name: data.Results[suite][test]}));
                 }
             }
         }

@@ -13,6 +13,8 @@ class Runner
 
     private $test_dir;
 
+    public $web_list = array();
+
     public function __construct()
     {
         $this->config = Config::getInstance()->get('global');
@@ -88,15 +90,24 @@ class Runner
         return $return;
     }
 
-    public function listTests($params = array())
+    public function listTests($web_list = false)
     {
-        $tests = array();
-        $tests = $this->parseDirectory($this->test_dir, false);
+        //$tests = $this->parseDirectory($this->test_dir, false, $web_list);
+        if ($handle = opendir($this->test_dir)) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry == '.' || $entry == '..') {
+                    continue;
+                } elseif (is_dir($this->test_dir.'/'.$entry)) {
+                    Config::getInstance()->setContext($entry);
+                    $this->parseDirectory($this->test_dir.'/'.$entry, false, $web_list);
+                }
+            }
+        }
 
-        return array('Status' => 'Y', 'Results' => $tests);
+        return array('Status' => 'Y', 'Results' => $web_list ? $this->web_list : $tests);
     }
 
-    private function parseDirectory($directory, $run_tests = true)
+    private function parseDirectory($directory, $run_tests = true, $web_list = false)
     {
         $listing = array();
 
@@ -105,9 +116,12 @@ class Runner
                 if ($entry == '.' || $entry == '..') {
                     continue;
                 } elseif (is_dir($directory.'/'.$entry)) {
-                    $listing[$entry] = $this->parseDirectory($directory.'/'.$entry, $run_tests);
+                    $listing[$entry] = $this->parseDirectory($directory.'/'.$entry, $run_tests, $web_list);
                 } elseif (preg_match('/([a-z0-9_\-]+)\.php$/i', $entry, $matches)) {
                     $listing[] = $matches[1];
+                    if ($web_list) {
+                        $this->web_list[Config::getInstance()->getContext()][] = Utility::getTestNameFromFile($directory.'/'.$entry);
+                    }
                     if ($run_tests && is_readable($directory.'/'.$entry)) {
                         echo " >> ".Utility::getTestNameFromFile($directory.'/'.$entry).'... ';
                         $test_results = $this->execute($directory.'/'.$entry);

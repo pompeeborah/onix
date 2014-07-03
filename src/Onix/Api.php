@@ -54,6 +54,6 @@ class Api
 
     private function listTests()
     {
-        return $this->runner->listTests();
+        return $this->runner->listTests(true);
     }
 }
